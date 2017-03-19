@@ -1,5 +1,6 @@
 # MusicScraper
 Python scipt to get ID3 tags and output them
+
 Based on the original script made by my friend, [MMaker](https://github.com/stysmmaker)
 
 ## Dependencies
