@@ -6,6 +6,11 @@ Based on the original script made by my friend, [MMaker](https://github.com/stys
 ## Dependencies
 [pytaglib](https://pypi.python.org/pypi/pytaglib)
 
+## Usage
+``python init.py > music.txt``
+
+You may specify an argument which directs to your music collection. This is usually in /home/{$USER}/Music, but placing the path as the argument will override the folder.
+
 # Example Output
 This was created from \*.mp3 files. According to pytaglib, it should support other formats, including:
 FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, MP4 and ASF files.
