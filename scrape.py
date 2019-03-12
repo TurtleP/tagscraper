@@ -11,7 +11,7 @@ _include = [
     ".mpc", ".wav", ".aiff",
     ".ogg"
 ]
-_music_directory = str(Path.home()) + "/Music"
+_music_directory = Path.home() / "Music"
 _counts = [0, 0, 0]
 
 
@@ -33,8 +33,6 @@ def _scrape(music_data, file):
         music_data[artist_info][album_info].append(song_info)
         _counts[2] += 1
 
-    return
-
 
 def find(directory=None):
     if directory is None:
@@ -42,14 +40,12 @@ def find(directory=None):
 
     files = os.listdir(directory)
 
-    path = directory + "/"
-
-    for index in range(len(files)):
-        if os.path.isdir(path + files[index]):
-            find(path + files[index])
+    for item in files:
+        if os.path.isdir(directory / item):
+            find(directory / item)
         else:
-            if files[index][-4:] in _include:  # Avoid things like .DS_Store
-                _scrape(_music_dict, path + files[index])
+            if item[-4:] in _include:  # Avoid things like .DS_Store
+                _scrape(_music_dict, directory / item)
 
     return _music_dict
 
@@ -68,5 +64,3 @@ def dump(music_data, filename="music.txt"):
         song_count = str(_counts[2]) + " Songs"
 
         file.write(artist_count + album_count + song_count)
-
-    return
