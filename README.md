@@ -5,6 +5,7 @@ Based on the original script made by my friend, [MMaker](https://github.com/stys
 
 ## Dependencies
 [pytaglib](https://pypi.python.org/pypi/pytaglib)
+[libtag1-dev](https://taglib.org/)
 
 ## Usage
 ``python main.py``
