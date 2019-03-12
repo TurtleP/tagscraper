@@ -7,49 +7,54 @@ Based on the original script made by my friend, [MMaker](https://github.com/stys
 [pytaglib](https://pypi.python.org/pypi/pytaglib)
 
 ## Usage
-``python init.py > music.txt``
+``python main.py``
 
-You may specify an argument which directs to your music collection. This is usually in /home/{$USER}/Music, but placing the path as the argument will override the default folder path.
+You may specify an argument which directs to your music collection. 
+This is usually in /home/{$USER}/Music.
+However, placing the path as the argument will override the default folder path.
 
 # Example Output
-This was created from \*.mp3 files. According to pytaglib, it should support other formats, including:
+This was created from \*.m4a files. According to pytaglib, it should support other formats, including:
 FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, MP4 and ASF files.
 
 ```
-Bastille
- ├─ Wild World (Complete Edition) (2016)
- │  ├─ Snakes
- │  ├─ Lethargy
- │  ├─ Two Evils
- │  ├─ Blame
- │  ├─ Way Beyond
- │  ├─ Good Grief
- │  ├─ Oil On Water
- │  ├─ Campus
- │  ├─ The Currents
- │  ├─ Glory
- │  ├─ Power
- │  ├─ Warmth
- │  ├─ Shame
- │  ├─ Fake It
- │  ├─ Send Them Off!
- │  ├─ The Anchor
- │  ├─ An Act of Kindness
- │  └─ Winter of Our Youth
- └─ Bad Blood (2013)
-    ├─ Overjoyed
-    ├─ Pompeii
-    ├─ Laughter Lines (Bonus Track)
-    ├─ Icarus
-    ├─ Get Home
-    ├─ These Streets
-    ├─ Oblivion
-    ├─ Bad Blood
-    ├─ The Silence (Bonus Track)
-    ├─ Things We Lost In the Fire
-    ├─ Weight of Living, Pt. 2
-    ├─ Weight of Living, Pt. 1 (Bonus Track)
-    ├─ Laura Palmer
-    ├─ Daniel In the Den
-    └─ Flaws
+"Bastille": {
+  "Bad Blood (Bonus Track Version)": [
+      "Pompeii",
+      "Things We Lost in the Fire",
+      "Bad Blood",
+      "Overjoyed",
+      "These Streets",
+      "Weight of Living, Pt. 2",
+      "Icarus",
+      "Oblivion",
+      "Flaws",
+      "Daniel in the Den",
+      "Laura Palmer",
+      "Get Home",
+      "The Silence (Bonus Track)",
+      "Weight of Living, Pt. 1 (Bonus Track)",
+      "Laughter Lines (Bonus Track)"
+  ],
+  "Wild World (Complete Edition)": [
+      "Good Grief",
+      "The Currents",
+      "An Act of Kindness",
+      "Warmth",
+      "Glory",
+      "Power",
+      "Two Evils",
+      "Send Them Off!",
+      "Lethargy",
+      "Blame",
+      "Fake It",
+      "Snakes",
+      "Winter of Our Youth",
+      "Way Beyond",
+      "Oil On Water",
+      "Campus",
+      "Shame",
+      "The Anchor"
+  ]
+},
 ```
