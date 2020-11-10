@@ -19,7 +19,7 @@ setup(
     description='Löve Potion Game Helper',
     long_description=readme,
     long_description_content_type='text/markdown',
-    install_requires=[],
+    install_requires=["progress"],
     packages=find_packages(),
     package_data={},
     entry_points={'console_scripts': ['musicscraper=musicscraper.__main__:main']},
