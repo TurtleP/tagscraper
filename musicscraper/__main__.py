@@ -36,7 +36,7 @@ def get_artist_totals(artist, totals):
 
 def run_scraper(DIRECTORY):
     files = [p for p in Path(DIRECTORY).rglob('*') if p.suffix in _INCLUDE]
-    output = f"musicscraper version {__version__}"
+    output = f"# musicscraper version {__version__} #\n\n"
 
     for song in files:
         metadata = taglib.File(str(song)).tags
@@ -77,7 +77,7 @@ def main(args=None):
         start = datetime.now()
 
         thread = Thread(target=run_scraper, args=(DIRECTORY,), daemon=True)
-        spinner = MoonSpinner('Parsing audio files..')
+        spinner = MoonSpinner('Parsing audio files.. ')
         thread.start()
 
         while thread.is_alive():
