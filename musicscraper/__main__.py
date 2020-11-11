@@ -58,7 +58,7 @@ def run_scraper(DIRECTORY):
     output += f"Compiled Date & Time: {compile_info}\n"
     output += f"{totals[0]} Artists • {totals[1]} Albums • {totals[2]} Songs"
 
-    with open("music.txt", "w") as file:
+    with open("music.txt", "w", encoding="utf-8") as file:
         file.write(output)
 
 
