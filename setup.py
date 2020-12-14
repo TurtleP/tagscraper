@@ -19,7 +19,7 @@ setup(
     description='Music Metadata Scraper',
     long_description=readme,
     long_description_content_type='text/markdown',
-    install_requires=["progress", "taglib"],
+    install_requires=["progress", "pytaglib"],
     packages=find_packages(),
     package_data={},
     entry_points={'console_scripts': ['musicscraper=musicscraper.__main__:main']},
