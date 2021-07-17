@@ -1,24 +1,31 @@
 # MusicScraper
+
 Python scipt to get ID3 tags and output them
 
 Based on the original script made by my friend, [MMaker](https://github.com/stysmmaker)
 
 ## Dependencies
+
 [pytaglib](https://pypi.python.org/pypi/pytaglib)
 [libtag1-dev](https://taglib.org/)
 
 ## Usage
-``python main.py``
 
-You may specify an argument which directs to your music collection.
-This is usually in /home/{$USER}/Music.
-However, placing the path as the argument will override the default folder path.
+```
+usage: musicscraper [-h] [--dir DIR] [--out OUT] [--version]
 
-# Example Output
-This was created from m4a files. According to pytaglib, it should support other formats, including:
-FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, mp4 and ASF files.
+Music (metadata) Scraper that outputs to a file
 
-Best results come from an iTunes library, for example, as it will have all the necessary id3 tags.
+optional arguments:
+  -h, --help         show this help message and exit
+  --dir DIR, -d DIR  directory to scan for audio files
+  --out OUT, -o OUT  output directory for music.txt
+  --version          show program's version number and exit
+```
+
+## Example Output
+
+This was created from m4a files from iTunes. According to pytaglib, it should support other formats, including: FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, mp4 and ASF files.
 
 ```
 Bastille

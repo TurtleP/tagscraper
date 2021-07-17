@@ -3,14 +3,11 @@ from setuptools import setup, find_packages
 with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
-with open('musicscraper/__init__.py', 'r', encoding='utf-8') as f:
-    for line in f:
-        if line.startswith('__version__'):
-            version = eval(line.split('=')[1])
+from musicscraper import __version__
 
 setup(
     name='musicscraper',
-    version=version,
+    version=__version__,
     author='TurtleP',
     author_email='jpostelnek@outlook.com',
     license='MIT',
@@ -19,10 +16,11 @@ setup(
     description='Music Metadata Scraper',
     long_description=readme,
     long_description_content_type='text/markdown',
-    install_requires=["progress", "pytaglib"],
+    install_requires=["pytaglib"],
     packages=find_packages(),
     package_data={},
-    entry_points={'console_scripts': ['musicscraper=musicscraper.__main__:main']},
+    entry_points={'console_scripts': [
+        'musicscraper=musicscraper.__main__:main']},
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
