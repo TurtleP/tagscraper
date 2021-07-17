@@ -9,6 +9,17 @@ Based on the original script made by my friend, [MMaker](https://github.com/stys
 [pytaglib](https://pypi.python.org/pypi/pytaglib)
 [libtag1-dev](https://taglib.org/)
 
+## Installation
+
+Download the repsective release binary from the [releases page](https://github.com/TurtleP/MusicScraper/releases). Once done, do the following:
+
+* Windows:
+    - Place the executable in `%appdata%/musicscraper` and add this to your PATH.
+* macOS:
+    - TBD
+* Linux:
+    - Place the binary in `/usr/bin`
+
 ## Usage
 
 ```
