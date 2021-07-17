@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
 from musicscraper import __version__, __prog_name__, __description__
-from .scraper import Scraper
+from musicscraper.scraper import Scraper
 
 
 def main():
@@ -22,8 +22,8 @@ def main():
         path = parsed.dir
 
     output = str()
-    if parsed.output:
-        output = parsed.output
+    if parsed.out:
+        output = parsed.out
 
     Scraper(path).output(output)
 

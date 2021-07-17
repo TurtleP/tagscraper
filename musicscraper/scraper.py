@@ -4,7 +4,7 @@ from pathlib import Path
 
 import taglib
 
-from . import __version__, __prog_name__
+from musicscraper import __version__, __prog_name__
 
 
 class Scraper:
