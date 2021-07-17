@@ -25,7 +25,7 @@ optional arguments:
 
 ## Example Output
 
-This was created from m4a files from iTunes. According to pytaglib, it should support other formats, including: FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, mp4 and ASF files.
+This was created with m4a files from iTunes. According to pytaglib, it should support other formats, including: FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, mp4 and ASF files.
 
 ```
 Bastille
