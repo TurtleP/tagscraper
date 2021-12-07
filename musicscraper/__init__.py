@@ -5,7 +5,7 @@
 # You can find the full license text in LICENSE.md in the root of this project.
 
 __author__ = "TurtleP"
-__copyright__ = "Copyright ⓒ Jeremy Postelnek"
+__copyright__ = "Copyright (c) Jeremy Postelnek"
 __description__ = "Music (metadata) Scraper that outputs to a file"
 __license__ = "MIT"
 __prog_name__ = "musicscraper"

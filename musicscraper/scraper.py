@@ -1,10 +1,11 @@
-import os
+import re
+import time
 from datetime import datetime
 from pathlib import Path
 
 import taglib
 
-from musicscraper import __version__, __prog_name__
+from musicscraper import __prog_name__, __version__, pretty
 
 
 class Scraper:
@@ -22,16 +23,19 @@ class Scraper:
     __STATS = "# {0}"
     __FOOTER = "#{0:-^d}"
 
-    def __init__(self, directory: str) -> None:
+    def __init__(self, directory: str, output_dir: str) -> None:
         """Initialize the scraper with an optional @directory."""
 
         path = Path(directory)
         if directory and not path.exists():
-            return print(f"Directory {path} does not exist.")
-        else:
             path = Scraper._DEFAULT_PATH
 
         self.music = dict()
+
+        self.output_dir = output_dir
+        self.filepath = f"{output_dir}/music.txt"
+        self.time = time.time()
+
         self.__scan_directory(path)
 
     def __add_data(self, filepath: str) -> None:
@@ -41,9 +45,9 @@ class Scraper:
 
         # Note: use ALBUMARTIST because ARTIST includes extra data #
         # Most, if not all music players group their Artist list via that #
-        artist_name = " ".join(meta_tag["ALBUMARTIST"])
-        album_name = " ".join(meta_tag["ALBUM"])
-        song_name = " ".join(meta_tag["TITLE"])
+        artist_name = meta_tag["ALBUMARTIST"][0]
+        album_name = meta_tag["ALBUM"][0]
+        song_name = meta_tag["TITLE"][0]
 
         # Make sure that the Artist isn't already added #
         if not artist_name in self.music:
@@ -64,6 +68,8 @@ class Scraper:
                 continue
 
             self.__add_data(str(filepath))
+
+        self.__output()
 
     def __get_stats(self) -> str:
         """Get the overall count of artists, albums, and songs as a str"""
@@ -90,22 +96,17 @@ class Scraper:
         Scraper.__FOOTER = Scraper.__FOOTER.replace("d", str(len(__stats)))
         __footer = Scraper.__FOOTER.format(__versioning)
 
-        return [__header, __stats, __footer]
+        return "\n".join([__header, __stats, __footer])
 
-    def output(self, directory: str) -> None:
+    def __output(self) -> None:
         """Write the final output into @directory/music.txt"""
 
-        if not directory or os.path.exists(directory):
-            directory = Scraper._DEFAULT_OUTPUT_PATH
+        _buffer = (f"{pretty.pprint(self.music)}"
+                   f"\n\n{self.__build_footer()}")
 
-        with open(f"{directory}/music.txt", "w", encoding="utf-8") as file:
-            for artist, album_dict in self.music.items():
-                print(artist, file=file)
-                for album, song_list in album_dict.items():
-                    print(f"  {album}", file=file)
-                    for song_title in song_list:
-                        print(f"    {song_title}", file=file)
+        with open(self.filepath, "w", encoding="utf-8") as file:
+            print(_buffer, file=file)
 
-                print(file=file)
-
-            print("\n".join(self.__build_footer()), file=file)
+        exec_time = str.format("{:.2f}", (time.time() - self.time))
+        print(
+            f"Operation succeeded in {exec_time}s. File output to {self.filepath}")
