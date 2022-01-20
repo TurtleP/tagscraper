@@ -1,4 +1,4 @@
-# tagscraper
+# tagscraper [![cargo](https://github.com/TurtleP/tagscraper/actions/workflows/rust.yml/badge.svg)](https://github.com/TurtleP/tagscraper/actions/workflows/rust.yml)
 
 A rust application to get ID3 tags and output them to a file.
 Based on the original script made by my friend, [MMaker](https://github.com/stysmmaker)
