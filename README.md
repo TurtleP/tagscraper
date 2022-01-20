@@ -36,15 +36,18 @@ Windows users, please add the `tagscraper` path to your PATH environment variabl
 ## Usage
 
 ```
-usage: musicscraper [-h] [--dir DIR] [--out OUT] [--version]
+tagscraper 0.4.0
 
-Music (metadata) Scraper that outputs to a file
+USAGE:
+    tagscraper.exe [OPTIONS] [DIR]
 
-optional arguments:
-  -h, --help         show this help message and exit
-  --dir DIR, -d DIR  directory to scan for audio files
-  --out OUT, -o OUT  output directory for music.txt
-  --version          show program's version number and exit
+ARGS:
+    <DIR>    [default: ~/Music]
+
+OPTIONS:
+    -h, --help         Print help information
+    -o, --out <OUT>    [default: .]
+    -V, --version      Print version information
 ```
 
 ## Example Output
@@ -69,6 +72,7 @@ Bastille
     The Silence (Bonus Track)
     Weight of Living, Pt. 1 (Bonus Track)
     Laughter Lines (Bonus Track)
+
   Doom Days
     Quarter Past Midnight
     Bad Decisions
@@ -81,12 +85,14 @@ Bastille
     Another Place
     Those Nights
     Joy
+
   Doom Days (This Got Out of Hand Edition)
     Admit Defeat
     Good Lesson
     Final Hour
     Comfort of Strangers
     Hangin'
+
   Wild World (Complete Edition)
     Good Grief
     The Currents
