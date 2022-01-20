@@ -1,5 +1,2 @@
-__pycache__/
-music.txt
-build
-dist
-*.egg-info
+target
+*.lock

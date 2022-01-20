@@ -1,24 +1,37 @@
-# MusicScraper
+# tagscraper
 
-Python scipt to get ID3 tags and output them
-
+A rust application to get ID3 tags and output them to a file.
 Based on the original script made by my friend, [MMaker](https://github.com/stysmmaker)
 
 ## Dependencies
 
-[pytaglib](https://pypi.python.org/pypi/pytaglib)
-[libtag1-dev](https://taglib.org/)
+See [the Cargo.toml file](Cargo.toml). These will be installed automatically when building via `cargo build`.
 
 ## Installation
 
-Download the repsective release binary from the [releases page](https://github.com/TurtleP/MusicScraper/releases). Once done, do the following:
+There are a few ways this can be installed. The easiest is to download the binary from the [releases page](https://github.com/TurtleP/tagscraper) and save it to a memorable directory. There are a few alternate methods that also exist.
 
-* Windows:
-    - Place the executable in `%appdata%/musicscraper` and add this to your PATH.
-* macOS:
-    - TBD
-* Linux:
-    - Place the binary in `/usr/bin`
+### Releases Page
+
+Specifically, you will want to save the binary in these places. Realistically it does not matter, but these are the simplest to remember.<br>
+Windows users, please add the `tagscraper` path to your PATH environment variable.
+
+- Windows:
+  - `%appdata%\tagscraper`
+- macOS & Linux:
+  - `/usr/bin`
+
+
+### Git Clone
+
+1. Clone this repository
+2. Open your termainal to the new directory
+3. Run `cargo install --path .`
+
+### Cargo via Git URL
+
+1. Open your terminal
+2. Run `cargo install --git git://github.com/TurtleP/tagscraper`
 
 ## Usage
 
