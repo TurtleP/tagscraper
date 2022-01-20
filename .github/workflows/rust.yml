@@ -1,0 +1,55 @@
+name: cargo
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  Ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions-rs/toolchain@v1.01
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+    - run: cargo build --release --all-features
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Ubuntu
+        path: target/release/tagscraper
+
+  macOS:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1.01
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: cargo build --release --all-features
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Ubuntu
+          path: target/release/tagscraper.app
+          
+  Windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1.01
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: cargo build --release --all-features
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Ubuntu
+          path: target/release/tagscraper.exe
