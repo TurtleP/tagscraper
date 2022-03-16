@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
-from musicscraper import __version__
+from tagscraper import __version__
 
 setup(
     name='musicscraper',

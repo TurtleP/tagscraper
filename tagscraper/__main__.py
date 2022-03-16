@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 
-from musicscraper import __description__, __prog_name__, __version__
-from musicscraper.scraper import Scraper
+from tagscraper import __description__, __prog_name__, __version__
+from tagscraper.scraper import Scraper
 
 
 def main():

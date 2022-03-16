@@ -5,7 +5,7 @@ from pathlib import Path
 
 import taglib
 
-from musicscraper import __prog_name__, __version__, pretty
+from tagscraper import __prog_name__, __version__, pretty
 
 
 class Scraper:
@@ -101,11 +101,16 @@ class Scraper:
     def __output(self) -> None:
         """Write the final output into @directory/music.txt"""
 
-        _buffer = (f"{pretty.pprint(self.music)}"
-                   f"\n\n{self.__build_footer()}")
-
         with open(self.filepath, "w", encoding="utf-8") as file:
-            print(_buffer, file=file)
+            for artist, album_data in self.music.items():
+                print(artist, file=file)
+                for album, song_data in album_data.items():
+                    print(f"  {album}", file=file)
+                    for song_name in song_data:
+                        print(f"    {song_name}", file=file)
+                print("", file=file)
+
+            print(f"{self.__build_footer()}", file=file)
 
         exec_time = str.format("{:.2f}", (time.time() - self.time))
         print(
