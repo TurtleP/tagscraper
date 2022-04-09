@@ -5,7 +5,7 @@ from pathlib import Path
 
 import taglib
 
-from tagscraper import __prog_name__, __version__, pretty
+from tagscraper import __prog_name__, __version__
 
 
 class Scraper:
