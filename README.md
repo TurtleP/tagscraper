@@ -1,53 +1,32 @@
-# tagscraper [![cargo](https://github.com/TurtleP/tagscraper/actions/workflows/rust.yml/badge.svg)](https://github.com/TurtleP/tagscraper/actions/workflows/rust.yml)
+# MusicScraper
 
-A rust application to get ID3 tags and output them to a file.
+Python scipt to get ID3 tags and output them
+
 Based on the original script made by my friend, [MMaker](https://github.com/stysmmaker)
 
 ## Dependencies
 
-See [the Cargo.toml file](Cargo.toml). These will be installed automatically when building via `cargo build`.
+[pytaglib](https://pypi.python.org/pypi/pytaglib)
+[libtag1-dev](https://taglib.org/)
 
 ## Installation
 
-There are a few ways this can be installed. The easiest is to download the binary from the [releases page](https://github.com/TurtleP/tagscraper) and save it to a memorable directory. There are a few alternate methods that also exist.
-
-### Releases Page
-
-Specifically, you will want to save the binary in these places. Realistically it does not matter, but these are the simplest to remember.<br>
-Windows users, please add the `tagscraper` path to your PATH environment variable.
-
-- Windows:
-  - `%appdata%\tagscraper`
-- macOS & Linux:
-  - `/usr/bin`
-
-
-### Git Clone
-
-1. Clone this repository
-2. Open your termainal to the new directory
-3. Run `cargo install --path .`
-
-### Cargo via Git URL
-
-1. Open your terminal
-2. Run `cargo install --git git://github.com/TurtleP/tagscraper`
+`pip install git+https://github.com/TurtleP/tagscraper.git
 
 ## Usage
 
 ```
-tagscraper 0.4.0
+usage: tagscraper [-h] [--dir DIR | --list LIST] [--out OUT] [--filename FILENAME] [--version]
 
-USAGE:
-    tagscraper.exe [OPTIONS] [DIR]
+Music (metadata) Scraper that outputs to a file
 
-ARGS:
-    <DIR>    [default: ~/Music]
-
-OPTIONS:
-    -h, --help         Print help information
-    -o, --out <OUT>    [default: .]
-    -V, --version      Print version information
+options:
+  -h, --help           show this help message and exit
+  --dir DIR            directory to scan for audio files
+  --list LIST          input of items, separated by commas
+  --out OUT            output directory for music.txt
+  --filename FILENAME  name of the output file
+  --version            show version and exi
 ```
 
 ## Example Output
@@ -72,7 +51,6 @@ Bastille
     The Silence (Bonus Track)
     Weight of Living, Pt. 1 (Bonus Track)
     Laughter Lines (Bonus Track)
-
   Doom Days
     Quarter Past Midnight
     Bad Decisions
@@ -85,14 +63,12 @@ Bastille
     Another Place
     Those Nights
     Joy
-
   Doom Days (This Got Out of Hand Edition)
     Admit Defeat
     Good Lesson
     Final Hour
     Comfort of Strangers
     Hangin'
-
   Wild World (Complete Edition)
     Good Grief
     The Currents
