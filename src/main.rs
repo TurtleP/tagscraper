@@ -1,122 +1,88 @@
-use clap::Parser;
-
-use std::ffi::OsStr;
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
-
 use audiotags::Tag;
-use shellexpand;
+use clap::Parser;
+use itertools::Itertools;
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::{self, Write};
+use std::path::PathBuf;
 use walkdir::WalkDir;
 
 mod tags;
+use self::tags::Info;
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-const APPNAME: &str = env!("CARGO_PKG_NAME");
+#[derive(Parser, Debug)]
+#[command(version, about)]
+struct Commands {
+    #[arg(short, long, default_value = ".")]
+    directory: Option<PathBuf>,
 
-#[derive(Parser)]
-#[clap(version = VERSION)]
-struct Opts {
-    #[clap(default_value = "~/Music")]
-    dir: String,
-
-    #[clap(short, long, default_value = ".")]
-    out: String,
+    #[arg(short, long, default_value = "music.txt")]
+    filepath: Option<PathBuf>,
 }
 
-fn main() {
-    let opts: Opts = Opts::parse();
+fn main() -> Result<(), i32> {
+    let args = Commands::parse();
 
-    /* expand the tilde, if necessary */
-    let expanded = shellexpand::tilde(&opts.dir).into_owned();
+    /* we can expect the directory to be default */
+    let root_path = args.directory.unwrap();
+    let mut artist_info: HashMap<String, Info> = HashMap::new();
 
-    /* clone the string */
-    let value = expanded.clone();
-    let path = Path::new(OsStr::new(&value));
+    /* create a way to iterate through the directory recursively */
+    let walk_iter = WalkDir::new(root_path)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|item| item.file_type().is_file() && item.path().extension().is_some());
 
-    if !path.is_dir() {
-        return println!("Path '{}' does not exist. Aborting.", opts.dir);
-    }
-
-    let mut seen: Vec<String> = Vec::new();
-    let file = match File::create(format!("{}/music.txt", opts.out)) {
-        Ok(x) => x,
-        Err(_) => return,
-    };
-
-    let mut stats = tags::Stats {
-        artists: 0,
-        albums: 0,
-        songs: 0,
-    };
-
-    for entry in WalkDir::new(path.as_os_str()) {
-        let dir_entry = match entry {
-            Ok(x) => x,
-            Err(_) => {
-                println!("Failed to read entry!");
-                break;
-            }
+    /* walk the directory */
+    for entry in walk_iter {
+        /* get the audio tag from the file - only if it's valid */
+        let tag = match Tag::new().read_from_path(entry.path()) {
+            Ok(v) => v,
+            Err(_) => continue,
         };
 
-        if dir_entry.path().is_file() && dir_entry.path().extension().is_some() {
-            let audio_tag = Tag::default();
+        let album_artist = tag.album_artist().ok_or(-1)?;
+        let data = artist_info
+            .entry(String::from(album_artist))
+            .or_insert(Info::new());
 
-            let meta_data = match audio_tag.read_from_path(dir_entry.path()) {
-                Ok(x) => x,
-                Err(_) => continue,
-            };
+        let album_name = tag.album_title().ok_or(-2)?;
+        // let album_year = tag.year().ok_or(-3)?;
 
-            let (artist, album, title, _year) = tags::from_tag(meta_data);
+        let song_title = tag.title().ok_or(-3)?;
 
-            let arist_val = artist.clone();
-            if !seen.contains(&arist_val) {
-                if seen.len() > 0 {
-                    write(&file, String::new(), 0);
-                }
+        data.add_song(album_name, song_title)
+    }
 
-                write(&file, artist, tags::Indentation::IndentArtist.into());
+    let filepath = args.filepath.ok_or(-4)?;
+    let _ = write_output(&filepath, &artist_info);
 
-                stats.artists += 1;
-                seen.push(arist_val);
+    return Ok(());
+}
+
+fn write_output(filename: &PathBuf, info: &HashMap<String, Info>) -> io::Result<()> {
+    let mut file = File::create(filename)?;
+
+    for artist in info.keys().sorted_by_key(|key| key.to_lowercase()) {
+        writeln!(file, "{}", artist)?;
+        for album in info[artist].get_album_info().keys() {
+            writeln!(file, "  {}", album)?;
+            for index in 0..info[artist].get_song_count(album) {
+                writeln!(file, "    {}", info[artist].get_song(album, index))?;
             }
-
-            let album_val = album.clone();
-            if !seen.contains(&album_val) {
-                write(&file, album, tags::Indentation::IndentAlbum.into());
-
-                stats.albums += 1;
-                seen.push(album_val);
-            }
-
-            stats.songs += 1;
-            write(&file, title, tags::Indentation::IndentTitle.into());
         }
     }
 
-    /* fancy output thing */
+    let artist_count = info.keys().len();
+    let albums_count: usize = info.values().map(|x| x.get_album_count()).sum();
 
-    let values = format!(
-        "Artists {} • Albums {} • Songs {}",
-        stats.artists, stats.albums, stats.songs
-    );
+    let songs_count: usize = info.values().map(|data| data.get_total_songs()).sum();
 
-    let app_meta: String = format!("{} {}", APPNAME, VERSION);
-    let metadata = format!("# {:-^width$} #", app_meta, width = values.chars().count());
+    writeln!(
+        file,
+        "\n{} Artist(s) / {} Album(s) / {} Song(s)",
+        artist_count, albums_count, songs_count
+    )?;
 
-    let footer = format!("# {:-^width$} #", "", width = values.chars().count());
-
-    write(&file, String::new(), 0);
-
-    write(&file, metadata, 0);
-    write(&file, format!("# {} #", values), 0);
-    write(&file, footer, 0)
-}
-
-fn write(mut file: &File, data: String, indentation: usize) {
-    let indent = String::from_utf8(vec![b' '; indentation]).unwrap();
-    let result = format!("{}{}\n", indent, data);
-
-    file.write_all(result.as_bytes())
-        .expect("Cannot write to file.");
+    Ok(())
 }
