@@ -1,39 +1,47 @@
-use num_enum::IntoPrimitive;
+use std::collections::HashMap;
 
-pub struct Stats {
-    pub artists: i32,
-    pub albums: i32,
-    pub songs: i32,
+pub struct Info {
+    album_info: HashMap<String, Vec<String>>,
 }
 
-#[derive(IntoPrimitive)]
-#[repr(usize)]
-pub enum Indentation {
-    IndentArtist = 0x00,
-    IndentAlbum = 0x02,
-    IndentTitle = 0x04,
-}
+impl Info {
+    pub fn new() -> Info {
+        return Info {
+            album_info: HashMap::new(),
+        };
+    }
 
-pub fn from_tag(tag: std::boxed::Box<dyn audiotags::AudioTag>) -> (String, String, String, String) {
-    let artist = match tag.album_artist() {
-        Some(x) => String::from(x),
-        None => String::from("Unknown Artist"),
-    };
+    pub fn add_song(&mut self, album: &str, title: &str) {
+        let entry = self
+            .album_info
+            .entry(String::from(album))
+            .or_insert(Vec::new());
 
-    let album = match tag.album_title() {
-        Some(x) => String::from(x),
-        None => String::from("Unknown Album"),
-    };
+        entry.push(String::from(title));
+    }
 
-    let title = match tag.title() {
-        Some(x) => String::from(x),
-        None => String::from("Unknown Title"),
-    };
+    pub fn get_album_info(&self) -> &HashMap<String, Vec<String>> {
+        return &self.album_info;
+    }
 
-    let year = match tag.year() {
-        Some(x) => x.to_string(),
-        None => String::from("Unknown Year"),
-    };
+    pub fn get_song(&self, album: &String, index: usize) -> &String {
+        return &self.album_info[album][index];
+    }
 
-    return (artist, album, title, year);
+    pub fn get_album_count(&self) -> usize {
+        return self.album_info.len();
+    }
+
+    pub fn get_total_songs(&self) -> usize {
+        let mut total = 0;
+        for (_, song_list) in &self.album_info {
+            total += song_list.len();
+        }
+
+        return total;
+    }
+
+    pub fn get_song_count(&self, album: &String) -> usize {
+        return self.album_info[album].len();
+    }
 }
