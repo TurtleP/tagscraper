@@ -1,88 +1,82 @@
+use crate::tags::TagData;
+
 use audiotags::Tag;
 use clap::Parser;
-use itertools::Itertools;
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::{self, Write};
+
+use std::fs;
+use std::io::Write;
 use std::path::PathBuf;
-use walkdir::WalkDir;
 
 mod tags;
-use self::tags::Info;
 
-#[derive(Parser, Debug)]
-#[command(version, about)]
-struct Commands {
-    #[arg(short, long, default_value = ".")]
-    directory: Option<PathBuf>,
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const APPNAME: &str = env!("CARGO_PKG_NAME");
 
-    #[arg(short, long, default_value = "music.txt")]
-    filepath: Option<PathBuf>,
+#[derive(Parser)]
+#[clap(version = VERSION, name = APPNAME)]
+struct Opts {
+    #[clap(help = "Directory to scan")]
+    dir: PathBuf,
+
+    #[clap(short, long, default_value = "./music.txt", help = "Output file")]
+    out: PathBuf,
 }
 
-fn main() -> Result<(), i32> {
-    let args = Commands::parse();
-
-    /* we can expect the directory to be default */
-    let root_path = args.directory.unwrap();
-    let mut artist_info: HashMap<String, Info> = HashMap::new();
-
-    /* create a way to iterate through the directory recursively */
-    let walk_iter = WalkDir::new(root_path)
-        .into_iter()
-        .filter_map(Result::ok)
-        .filter(|item| item.file_type().is_file() && item.path().extension().is_some());
-
-    /* walk the directory */
-    for entry in walk_iter {
-        /* get the audio tag from the file - only if it's valid */
-        let tag = match Tag::new().read_from_path(entry.path()) {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
-
-        let album_artist = tag.album_artist().ok_or(-1)?;
-        let data = artist_info
-            .entry(String::from(album_artist))
-            .or_insert(Info::new());
-
-        let album_name = tag.album_title().ok_or(-2)?;
-        // let album_year = tag.year().ok_or(-3)?;
-
-        let song_title = tag.title().ok_or(-3)?;
-
-        data.add_song(album_name, song_title)
+fn validate_path(path: &PathBuf) {
+    if path.is_dir() && path.exists() {
+        return;
     }
-
-    let filepath = args.filepath.ok_or(-4)?;
-    let _ = write_output(&filepath, &artist_info);
-
-    return Ok(());
+    println!("Path '{}' does not exist. Aborting.", path.display());
 }
 
-fn write_output(filename: &PathBuf, info: &HashMap<String, Info>) -> io::Result<()> {
-    let mut file = File::create(filename)?;
+fn read_dir(path: &PathBuf, items: &mut Vec<TagData>) {
+    for entry in fs::read_dir(path).unwrap() {
+        let entry = entry.unwrap();
+        let path = entry.path();
 
-    for artist in info.keys().sorted_by_key(|key| key.to_lowercase()) {
-        writeln!(file, "{}", artist)?;
-        for album in info[artist].get_album_info().keys() {
-            writeln!(file, "  {}", album)?;
-            for index in 0..info[artist].get_song_count(album) {
-                writeln!(file, "    {}", info[artist].get_song(album, index))?;
+        if path.is_dir() {
+            read_dir(&path, items);
+        } else {
+            let tag = match Tag::new().read_from_path(&path) {
+                Ok(v) => v,
+                Err(_) => continue,
+            };
+
+            let (artist, album, title, year) = tags::from_tag(&tag);
+
+            if items.is_empty() || items.last().unwrap().artist != tag.album_artist().unwrap() {
+                items.push(TagData::new(artist, album, title, year));
+            } else {
+                items.last_mut().unwrap().add_track(album, title, year);
             }
         }
     }
+}
 
-    let artist_count = info.keys().len();
-    let albums_count: usize = info.values().map(|x| x.get_album_count()).sum();
+fn main() {
+    let opts: Opts = Opts::parse();
+    validate_path(&opts.dir);
 
-    let songs_count: usize = info.values().map(|data| data.get_total_songs()).sum();
+    let mut results = Vec::new();
+    read_dir(&opts.dir, &mut results);
 
-    writeln!(
-        file,
-        "\n{} Artist(s) / {} Album(s) / {} Song(s)",
-        artist_count, albums_count, songs_count
-    )?;
+    let mut file = fs::File::create(opts.out).unwrap();
 
-    Ok(())
+    for r in &results {
+        file.write_all(r.to_string().as_bytes()).unwrap();
+    }
+
+    let total_tracks: usize = results.iter().map(|x| x.total_tracks()).sum();
+    let total_albums: usize = results.iter().map(|x| x.albums.len()).sum();
+    let total_artists: usize = results.len();
+
+    let totals = format!(
+        "Artists {} • Albums {} • Tracks {}\n",
+        total_artists, total_albums, total_tracks
+    );
+
+    file.write_all(totals.as_bytes()).unwrap();
+
+    let version_info = format!("tagscraper {}\n", VERSION);
+    file.write_all(version_info.as_bytes()).unwrap();
 }

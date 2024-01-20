@@ -4,9 +4,11 @@
     {
       "type": "shell",
       "command": "cargo build --release",
-      "problemMatcher": ["$rustc"],
+      "problemMatcher": [
+        "$rustc"
+      ],
       "group": "build",
-      "label": "Rust: cargo build - MusicScraper"
+      "label": "Rust: cargo build"
     }
   ]
 }

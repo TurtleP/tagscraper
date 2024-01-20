@@ -1,47 +1,92 @@
-use std::collections::HashMap;
-
-pub struct Info {
-    album_info: HashMap<String, Vec<String>>,
+pub struct AlbumData {
+    pub album: String,
+    pub tracks: Vec<String>,
+    pub year: String,
+}
+pub struct TagData {
+    pub artist: String,
+    pub albums: Vec<AlbumData>,
 }
 
-impl Info {
-    pub fn new() -> Info {
-        return Info {
-            album_info: HashMap::new(),
-        };
+impl TagData {
+    pub fn new(artist: String, album: String, title: String, year: String) -> TagData {
+        let mut albums = Vec::new();
+
+        albums.push(AlbumData {
+            album,
+            tracks: vec![title],
+            year,
+        });
+
+        return TagData { artist, albums };
     }
 
-    pub fn add_song(&mut self, album: &str, title: &str) {
-        let entry = self
-            .album_info
-            .entry(String::from(album))
-            .or_insert(Vec::new());
+    pub fn add_track(&mut self, album: String, title: String, year: String) {
+        for a in &mut self.albums {
+            if a.album == album {
+                a.tracks.push(title);
+                return;
+            }
+        }
 
-        entry.push(String::from(title));
+        self.albums.push(AlbumData {
+            album,
+            tracks: vec![title],
+            year,
+        });
     }
 
-    pub fn get_album_info(&self) -> &HashMap<String, Vec<String>> {
-        return &self.album_info;
+    pub fn to_string(&self) -> String {
+        let mut output = String::new();
+
+        output.push_str(&format!("{}\n", self.artist));
+
+        for a in &self.albums {
+            output.push_str(&format!("  {}\n", a.album));
+
+            for t in &a.tracks {
+                output.push_str(&format!("    {}\n", t));
+            }
+        }
+
+        output.push_str("\n");
+
+        return output;
     }
 
-    pub fn get_song(&self, album: &String, index: usize) -> &String {
-        return &self.album_info[album][index];
-    }
-
-    pub fn get_album_count(&self) -> usize {
-        return self.album_info.len();
-    }
-
-    pub fn get_total_songs(&self) -> usize {
+    pub fn total_tracks(&self) -> usize {
         let mut total = 0;
-        for (_, song_list) in &self.album_info {
-            total += song_list.len();
+
+        for a in &self.albums {
+            total += a.tracks.len();
         }
 
         return total;
     }
+}
 
-    pub fn get_song_count(&self, album: &String) -> usize {
-        return self.album_info[album].len();
-    }
+pub fn from_tag(
+    tag: &std::boxed::Box<dyn audiotags::AudioTag>,
+) -> (String, String, String, String) {
+    let artist = match tag.album_artist() {
+        Some(x) => String::from(x),
+        None => String::from("Unknown Artist"),
+    };
+
+    let album = match tag.album_title() {
+        Some(x) => String::from(x),
+        None => String::from("Unknown Album"),
+    };
+
+    let title = match tag.title() {
+        Some(x) => String::from(x),
+        None => String::from("Unknown Title"),
+    };
+
+    let year = match tag.year() {
+        Some(x) => x.to_string(),
+        None => String::from("Unknown Year"),
+    };
+
+    return (artist, album, title, year);
 }
