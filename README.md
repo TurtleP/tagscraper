@@ -36,23 +36,18 @@ Windows users, please add the `tagscraper` path to your PATH environment variabl
 ## Usage
 
 ```
-tagscraper 0.4.0
+Usage: tagscraper.exe [OPTIONS] <DIR>
 
-USAGE:
-    tagscraper.exe [OPTIONS] [DIR]
+Arguments:
+  <DIR>  Directory to scan
 
-ARGS:
-    <DIR>    [default: ~/Music]
-
-OPTIONS:
-    -h, --help         Print help information
-    -o, --out <OUT>    [default: .]
-    -V, --version      Print version information
+Options:
+  -o, --out <OUT>  Output file [default: ./music.txt]
+  -h, --help       Print help
+  -V, --version    Print version
 ```
 
 ## Example Output
-
-This was created with m4a files from iTunes. According to pytaglib, it should support other formats, including: FLAC, MPC, Speex, WavPack, TrueAudio, WAV, AIFF, mp4 and ASF files.
 
 ```
 Bastille
