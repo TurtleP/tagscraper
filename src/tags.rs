@@ -23,7 +23,7 @@ impl TagData {
 
     pub fn add_track(&mut self, album: String, title: String, year: String) {
         for a in &mut self.albums {
-            if a.album == album {
+            if a.album == album && !a.tracks.contains(&title) {
                 a.tracks.push(title);
                 return;
             }

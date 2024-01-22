@@ -26,12 +26,12 @@ fn validate_path(path: &PathBuf) {
     if path.is_dir() && path.exists() {
         return;
     }
-    println!("Path '{}' does not exist. Aborting.", path.display());
+    println!("Path '{:?}' does not exist. Aborting.", path);
 }
 
 fn read_dir(path: &PathBuf, items: &mut Vec<TagData>) {
-    for entry in fs::read_dir(path).unwrap() {
-        let entry = entry.unwrap();
+    for entry in fs::read_dir(path).expect("Failed to read directory") {
+        let entry = entry.expect("Failed to read entry");
         let path = entry.path();
 
         if path.is_dir() {
@@ -43,8 +43,11 @@ fn read_dir(path: &PathBuf, items: &mut Vec<TagData>) {
             };
 
             let (artist, album, title, year) = tags::from_tag(&tag);
+            let tag_artist = tag.album_artist().expect("No tag album artist found");
 
-            if items.is_empty() || items.last().unwrap().artist != tag.album_artist().unwrap() {
+            if items.is_empty()
+                || &items.last().expect("No album artist found").artist != tag_artist
+            {
                 items.push(TagData::new(artist, album, title, year));
             } else {
                 items.last_mut().unwrap().add_track(album, title, year);
@@ -60,23 +63,24 @@ fn main() {
     let mut results = Vec::new();
     read_dir(&opts.dir, &mut results);
 
-    let mut file = fs::File::create(opts.out).unwrap();
+    results.sort_by(|a, b| a.artist.to_lowercase().cmp(&b.artist.to_lowercase()));
+
+    let mut file = fs::File::create(opts.out).expect("Failed to create file");
+    let mut contents = String::new();
 
     for r in &results {
-        file.write_all(r.to_string().as_bytes()).unwrap();
+        contents += &r.to_string();
     }
 
     let total_tracks: usize = results.iter().map(|x| x.total_tracks()).sum();
     let total_albums: usize = results.iter().map(|x| x.albums.len()).sum();
     let total_artists: usize = results.len();
 
-    let totals = format!(
-        "Artists {} • Albums {} • Tracks {}\n",
-        total_artists, total_albums, total_tracks
+    let data = format!(
+        "{}Artists {} • Albums {} • Tracks {}\ntagscraper {}",
+        contents, total_artists, total_albums, total_tracks, VERSION
     );
 
-    file.write_all(totals.as_bytes()).unwrap();
-
-    let version_info = format!("tagscraper {}\n", VERSION);
-    file.write_all(version_info.as_bytes()).unwrap();
+    file.write_all(data.as_bytes())
+        .expect("Failed to write to file");
 }
