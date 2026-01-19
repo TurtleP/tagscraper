@@ -1,8 +1,10 @@
 [package]
 name = "tagscraper"
-version = "0.7.0"
-edition = "2021"
+version = "0.8.0"
+edition = "2024"
 
 [dependencies]
-audiotags = "0.5.0"
+anyhow = "1.0.100"
+clap = { version = "4.5.54", features = ["derive"] }
+lofty = "0.22.4"
 walkdir = "2.5.0"
